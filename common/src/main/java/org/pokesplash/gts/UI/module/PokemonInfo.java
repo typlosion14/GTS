@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.pokesplash.gts.Gts;
 import org.pokesplash.gts.Listing.PokemonListing;
+import org.pokesplash.gts.util.CobbreedingUtil;
 import org.pokesplash.gts.util.ColorUtil;
 import org.pokesplash.gts.util.Utils;
 
@@ -134,6 +135,24 @@ public abstract class PokemonInfo {
 				lore.add(Component.literal("§bBreedable"));
 			}
 		}
+
+		if (CobbreedingUtil.isPresent()) {
+
+			if (Gts.config.isShowEggCount()) {
+				int max = CobbreedingUtil.getMaxEggCount();
+				String count = String.valueOf(CobbreedingUtil.getEggCount(pokemon));
+
+				lore.add(Component.empty().setStyle(style).append(ColorUtil.parse(Gts.language.getEggCount()))
+						.append(Component.literal(max < 0 ? count : count + "§7/§a" + max).setStyle(green)));
+			}
+
+			if (Gts.config.isShowSterile()) {
+				lore.add(Component.empty().setStyle(style).append(ColorUtil.parse(
+						CobbreedingUtil.isSterile(pokemon) ?
+								Gts.language.getSterile() : Gts.language.getFertile())));
+			}
+		}
+
 		return lore;
 	}
 

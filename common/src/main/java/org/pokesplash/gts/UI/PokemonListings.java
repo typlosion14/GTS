@@ -112,6 +112,7 @@ public class PokemonListings {
 				.set(51, ManageListings.getButton())
 				.set(53, NextPage.getButton())
 				.set(45, PreviousPage.getButton())
+				.set(46, SearchPokemon.getButton())
 				.set(52, RelistAll.getButton())
 				.build();
 

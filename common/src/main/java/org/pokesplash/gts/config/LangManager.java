@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.pokesplash.gts.Gts;
 import org.pokesplash.gts.config.updaters.lang.V2to3;
+import org.pokesplash.gts.config.updaters.lang.V3to4;
+import org.pokesplash.gts.config.updaters.lang.V4to5;
 import org.pokesplash.gts.util.JsonFileUpdater;
 import org.pokesplash.gts.util.Utils;
 
@@ -36,7 +38,7 @@ public class LangManager {
                         json.addProperty("version", version);
                     }
 
-                    if (!json.has("version") ||  version < 3 ) {
+                    if (!json.has("version") ||  version < Gts.LANG_FILE_VERSION ) {
                          try {
                              json = updateLang(json);
                              requiresWrite.set(true);
@@ -72,11 +74,13 @@ public class LangManager {
 
         HashMap<Integer, JsonFileUpdater> versions = new HashMap<>();
         versions.put(2, new V2to3());
+        versions.put(3, new V3to4());
+        versions.put(4, new V4to5());
 
         JsonObject out = json;
         int currentVersion = out.get("version").getAsInt();
 
-        while (currentVersion < Gts.CONFIG_FILE_VERSION) {
+        while (currentVersion < Gts.LANG_FILE_VERSION) {
             JsonFileUpdater updater = versions.get(currentVersion);
             out = updater.update(out);
 

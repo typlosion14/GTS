@@ -8,6 +8,7 @@ import ca.landonjw.gooeylibs2.api.helpers.PaginationHelper;
 import ca.landonjw.gooeylibs2.api.page.LinkedPage;
 import ca.landonjw.gooeylibs2.api.page.Page;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
+import com.cobblemon.mod.common.pokemon.Species;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,41 +33,92 @@ public class FilteredListings {
 
 	/**
 	 * Method that returns the page.
+	 * @param searchValue The text to look for in the listing and seller names.
 	 * @return Pokemon Listings page.
 	 */
 	public Page getPage(String searchValue) {
 
+		List<Listing> matches = new ArrayList<>();
+
+		for (Listing listing : getListings()) {
+
+			if (listing.getListingName().toLowerCase(Locale.ROOT).contains(searchValue.toLowerCase(Locale.ROOT))
+				|| listing.getSellerName().toLowerCase(Locale.ROOT).contains(searchValue.toLowerCase(Locale.ROOT))) {
+				matches.add(listing);
+			}
+		}
+
+		return build(matches, searchValue);
+	}
+
+	/**
+	 * Method that returns the page for a single species.
+	 *
+	 * Unlike the text search this matches the species exactly, so picking Mew from the search page
+	 * doesn't also bring up Mewtwo.
+	 *
+	 * @param species The species to show the listings of.
+	 * @return Pokemon Listings page.
+	 */
+	public Page getPage(Species species) {
+
+		List<Listing> matches = new ArrayList<>();
+
+		for (Listing listing : getListings()) {
+
+			if (!listing.isPokemon()) {
+				continue;
+			}
+
+			Species listed = ((PokemonListing) listing).getListing().getSpecies();
+
+			if (listed.getResourceIdentifier().equals(species.getResourceIdentifier())) {
+				matches.add(listing);
+			}
+		}
+
+		return build(matches, species.getTranslatedName().getString());
+	}
+
+	/**
+	 * @return All active listings, deep cloned when an external provider is registered.
+	 */
+	private List<Listing> getListings() {
+		return ListingAPI.getHighestPriority() == null ? Gts.listings.getListings() :
+				Gts.listings.getListings().stream().map(Listing::deepClone).toList();
+	}
+
+	/**
+	 * Builds the page from listings that have already been filtered.
+	 * @param listings The listings to show.
+	 * @param searchValue The value to write into the page title.
+	 * @return The page.
+	 */
+	private Page build(List<Listing> listings, String searchValue) {
 
 		PlaceholderButton placeholder = new PlaceholderButton();
 
 		List<Button> buttons = new ArrayList<>();
 
-		List<Listing> listings = ListingAPI.getHighestPriority() == null ? Gts.listings.getListings() :
-				Gts.listings.getListings().stream().map(Listing::deepClone).toList();
-
 		for (Listing listing : listings) {
+			List<Component> lore = ListingInfo.parse(listing);
 
-			if (listing.getListingName().toLowerCase(Locale.ROOT).contains(searchValue.toLowerCase(Locale.ROOT))
-				|| listing.getSellerName().toLowerCase(Locale.ROOT).contains(searchValue.toLowerCase(Locale.ROOT))) {
-				List<Component> lore = ListingInfo.parse(listing);
-
-				if (listing.isPokemon()) {
-					lore.addAll(PokemonInfo.parse((PokemonListing) listing));
-				}
-
-				Button button = GooeyButton.builder()
-						.display(listing.getIcon())
-						.with(DataComponents.CUSTOM_NAME, listing.getDisplayName())
-						.with(DataComponents.LORE, new ItemLore(lore))
-						.onClick((action) -> {
-							ServerPlayer sender = action.getPlayer();
-							Page page = new SingleListing().getPage(sender, listing);
-							UIManager.openUIForcefully(sender, page);
-						})
-						.build();
-
-				buttons.add(button);
+			if (listing.isPokemon()) {
+				lore.addAll(PokemonInfo.parse((PokemonListing) listing));
 			}
+
+			Button button = GooeyButton.builder()
+					.display(listing.getIcon())
+					.with(DataComponents.CUSTOM_NAME, listing.getDisplayName())
+					.with(DataComponents.LORE, new ItemLore(lore))
+					.onClick((action) -> {
+						ServerPlayer sender = action.getPlayer();
+						Page page = new SingleListing().getPage(sender, listing);
+						UIManager.openUIForcefully(sender, page);
+					})
+					.build();
+
+			buttons.add(button);
 		}
 
 		ChestTemplate template = ChestTemplate.builder(6)

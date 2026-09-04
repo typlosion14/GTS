@@ -31,6 +31,8 @@ public class Config {
 	private int listingDuration; // The length of each listing.
 	private Webhook discord; // Config settings for using discord webhooks.
 	private boolean showBreedable; // Should GTS look for "breedable" tag.
+	private boolean showEggCount; // Should GTS show how many eggs a Pokemon has produced (needs Cobbreeding).
+	private boolean showSterile; // Should GTS show whether a Pokemon can still breed (needs Cobbreeding).
 	private double taxRate; // How much the seller should be taxed after a sale.
 	private double minPrice1IV; // The minimum price of a pokemon with one full stat (31 IVs)
 	private double minPrice2IV; // The minimum price of a pokemon with two full stat (31 IVs)
@@ -81,6 +83,8 @@ public class Config {
 		bannedPokemon.add(new PokemonAspects());
 		discord = new Webhook();
 		showBreedable = false;
+		showEggCount = true;
+		showSterile = true;
         removedModDescriptions = new ArrayList<>();
         removedModDescriptions.add("simpletms");
 	}
@@ -187,6 +191,14 @@ public class Config {
 
 	public boolean isShowBreedable() {
 		return showBreedable;
+	}
+
+	public boolean isShowEggCount() {
+		return showEggCount;
+	}
+
+	public boolean isShowSterile() {
+		return showSterile;
 	}
 
 	public List<PokemonPrices> getCustomPokemonPrices() {

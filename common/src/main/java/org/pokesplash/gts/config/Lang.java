@@ -34,6 +34,7 @@ public class Lang {
 	private String filteredListingsTitle; // Title shown when using /search
 	private String historyTitle; // Title for the history page.
 	private String manageTitle; // Title for manage listings page.
+	private String searchTitle; // Title for the search page.
 
 
 	/**
@@ -81,7 +82,12 @@ public class Lang {
 	private String receiveListingButtonLabel; // The name of the "Receive Listing" button.
 	private String relistExpiredButtonLabel; // The label of the button that relists all expired listings.
 	private String expiredListingButtonLabel; // The label for the expired listing button.
+	private String searchButtonLabel; // The name of the "Search Pokemon" button.
 	private String pokemonBall; // The label for the ball that the Pokemon is held in.
+	private String eggCount; // The label for how many eggs the Pokemon has produced.
+	private String sterile; // The label shown when the Pokemon can no longer breed.
+	private String fertile; // The label shown when the Pokemon can still breed.
+	private String searchListingCount; // The label for how many listings a species has.
 
 	/**
 	 * Button Materials
@@ -101,6 +107,7 @@ public class Lang {
 	private JsonElement sortByNewestButtonItem; // The material for the sort by newest button.
 	private JsonElement sortByNameButtonItem; // The material for the sort by name button.
 	private JsonElement relistExpiredButtonItem; // The material for the relist button.
+	private JsonElement searchButtonItem; // The material for the search button.
 
 	/**
 	 * Placeholders
@@ -128,6 +135,7 @@ public class Lang {
 		itemListingsTitle = "§3Gts - Items";
 		pokemonListingsTitle = "§3Gts - Pokemon";
 		manageTitle = "§3Gts - Manage";
+		searchTitle = "§3Gts - Search";
 		purchaseMessageBuyer = "§2You have bought {listing} from {seller}!";
 		relistExpiredButtonLabel = "§9Relist Expired";
 		relistExpiredButtonItem = CodecUtils.encodeItem(new ItemStack(CobblemonItems.RARE_CANDY));
@@ -185,6 +193,12 @@ public class Lang {
 		onlyOnePokemonInParty = "§cYou can not list a Pokemon to GTS if you only have less than 2 Pokemon in your party.";
 		expiredListingButtonLabel = "§cExpired Listings";
 		pokemonBall = "§2Ball: ";
+		eggCount = "§2Eggs: ";
+		sterile = "§cSterile";
+		fertile = "§aFertile";
+		searchButtonLabel = "§bSearch Pokemon";
+		searchButtonItem = CodecUtils.encodeItem(new ItemStack(CobblemonItems.WIDE_LENS));
+		searchListingCount = "§9Listings: §b";
 	}
 
 
@@ -388,6 +402,27 @@ public class Lang {
 	}
 	public String getPokemonBall() {
 		return pokemonBall;
+	}
+	public String getEggCount() {
+		return eggCount;
+	}
+	public String getSterile() {
+		return sterile;
+	}
+	public String getFertile() {
+		return fertile;
+	}
+	public String getSearchButtonLabel() {
+		return searchButtonLabel;
+	}
+	public ItemStack getSearchButtonItem() {
+		return CodecUtils.decodeItem(searchButtonItem);
+	}
+	public String getSearchTitle() {
+		return searchTitle;
+	}
+	public String getSearchListingCount() {
+		return searchListingCount;
 	}
 
 	public CompletableFuture<Boolean> write() {
